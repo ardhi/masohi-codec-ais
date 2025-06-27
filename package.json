@@ -1,0 +1,30 @@
+{
+  "name": "masohi-codec-ais",
+  "version": "0.0.2",
+  "description": "AIS Codec for Masohi Codec",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ardhi/masohi-codec-ais.git"
+  },
+  "keywords": [
+    "masohi",
+    "bajo",
+    "framework",
+    "codec",
+    "binding"
+  ],
+  "author": "Ardhi Lukianto <ardhi@lukianto.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ardhi/masohi-codec-ais/issues"
+  },
+  "homepage": "https://github.com/ardhi/masohi-codec-ais#readme",
+  "dependencies": {
+    "masohi-aisparser": "^0.0.2"
+  }
+}
