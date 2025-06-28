@@ -10,10 +10,13 @@ import msg27 from './ais/msg-27.js'
 
 const { default: AisBitField } = aisBitField
 const prefixes = ['!AIVDO', '!AIVDM', '!ABVDO', '!ABVDM']
+const dsTypes = [1, 2, 3, 18, 19]
 
 class Ais {
-  constructor () {
+  constructor (opts = {}) {
+    this.dsWindow = opts.downsamplingWindow ?? 1
     this._context = {}
+    this._ds = {}
   }
 
   _postProcess (rec) {
@@ -92,6 +95,16 @@ class Ais {
     try {
       const bitField = new AisBitField(aisStr, padBit)
       const aisType = bitField.getInt(0, 6, true)
+      if (this.dsWindow > 0 && dsTypes.includes(aisType) && bitField && (bitField.bits >= 38)) {
+        const mmsi = bitField.getInt(8, 30, true)
+        const key = `${mmsi}:${aisType}`
+        const now = Math.floor(Date.now() / 1000)
+        if (this._ds[key]) {
+          const delta = now - this._ds[key]
+          if (delta < this.dsWindow) throw new Error(`Downsampling, MMSI: ${mmsi}, Type: ${aisType}, Delta: ${delta}`)
+        }
+        this._ds[key] = now
+      }
       let decoded
       switch (aisType) {
         case 1:
@@ -105,7 +118,7 @@ class Ais {
         case 24: decoded = msg24(aisStr, padBit, part[4]); break
         case 27: decoded = msg27(aisStr, padBit, part[4]); break
         default:
-          throw new Error(`Unsupported AIS type: ${sentence}`)
+          throw new Error(`Unsupported AIS type: ${aisType}`)
       }
       params.payload = decoded
       return decoded

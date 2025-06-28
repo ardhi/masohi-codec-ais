@@ -1,6 +1,6 @@
 {
   "name": "masohi-codec-ais",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "AIS Codec for Masohi Codec",
   "main": "index.js",
   "scripts": {
