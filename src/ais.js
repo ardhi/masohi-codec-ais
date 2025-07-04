@@ -7,6 +7,7 @@ import msg19 from './ais/msg-19.js'
 import msg21 from './ais/msg-21.js'
 import msg24 from './ais/msg-24.js'
 import msg27 from './ais/msg-27.js'
+import fs from 'fs'
 
 const { default: AisBitField } = aisBitField
 const prefixes = ['!AIVDO', '!AIVDM', '!ABVDO', '!ABVDM']
@@ -15,6 +16,9 @@ const dsTypes = [1, 2, 3, 18, 19]
 class Ais {
   constructor (opts = {}) {
     this.dsWindow = opts.downsamplingWindow ?? 1
+    if (opts.downsamplingTmpDir && fs.existsSync(opts.downsamplingTmpDir)) {
+      this.dsTmpDir = opts.downsamplingTmpDir
+    }
     this._context = {}
     this._ds = {}
   }
@@ -97,13 +101,23 @@ class Ais {
       const aisType = bitField.getInt(0, 6, true)
       if (this.dsWindow > 0 && dsTypes.includes(aisType) && bitField && (bitField.bits >= 38)) {
         const mmsi = bitField.getInt(8, 30, true)
-        const key = `${mmsi}:${aisType}`
+        const key = `${mmsi}_${aisType}`
         const now = Math.floor(Date.now() / 1000)
-        if (this._ds[key]) {
-          const delta = now - this._ds[key]
-          if (delta < this.dsWindow) throw new Error(`Downsampling, MMSI: ${mmsi}, Type: ${aisType}, Delta: ${delta}`)
+        if (this.dsTmpDir) {
+          const file = `${this.dsTmpDir}/${key}.txt`
+          if (fs.existsSync(file)) {
+            const content = parseInt(fs.readFileSync(file, 'utf8')) ?? now
+            const delta = now - content
+            if (delta < this.dsWindow) throw new Error(`Downsampling, MMSI: ${mmsi}, Type: ${aisType}, Delta: ${delta}`)
+          }
+          fs.writeFileSync(file, now + '', 'utf8')
+        } else {
+          if (this._ds[key]) {
+            const delta = now - this._ds[key]
+            if (delta < this.dsWindow) throw new Error(`Downsampling, MMSI: ${mmsi}, Type: ${aisType}, Delta: ${delta}`)
+          }
+          this._ds[key] = now
         }
-        this._ds[key] = now
       }
       let decoded
       switch (aisType) {
