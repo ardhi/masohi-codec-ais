@@ -3,11 +3,12 @@ import Ais from './src/ais.js'
 async function factory (pkgName) {
   const me = this
 
-  return class MasohiCodecAis extends this.lib.Plugin {
+  class MasohiCodecAis extends this.lib.Plugin {
+    static alias = 'codec-ais'
+    static dependencies = ['masohi']
+
     constructor () {
       super(pkgName, me.app)
-      this.alias = 'codec-ais'
-      this.dependencies = ['masohi']
     }
 
     init = async () => {
@@ -17,6 +18,8 @@ async function factory (pkgName) {
       return new Ais()
     }
   }
+
+  return MasohiCodecAis
 }
 
 export default factory
