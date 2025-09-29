@@ -4,7 +4,8 @@
   "description": "AIS Codec for Masohi Codec",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build-doc": "jsdoc -c .jsdoc.conf.json",
+    "test": "mocha"
   },
   "type": "module",
   "bajo": {
@@ -29,5 +30,9 @@
   "homepage": "https://github.com/ardhi/masohi-codec-ais#readme",
   "dependencies": {
     "masohi-aisparser": "^0.0.2"
+  },
+  "devDependencies": {
+    "clean-jsdoc-theme": "^4.3.0",
+    "jsdoc-plugin-intersection": "^1.0.4"
   }
 }
