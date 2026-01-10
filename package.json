@@ -9,7 +9,9 @@
   },
   "type": "module",
   "bajo": {
-    "type": "plugin"
+    "type": "plugin",
+    "alias": "mcodecais",
+    "dependencies": ["masohi", "masohi-codec"]
   },
   "repository": {
     "type": "git",

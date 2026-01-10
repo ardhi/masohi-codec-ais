@@ -15,9 +15,6 @@ async function factory (pkgName) {
    * @class
    */
   class MasohiCodecAis extends this.app.baseClass.Base {
-    static alias = 'codec-ais'
-    static dependencies = ['masohi', 'masohi-codec']
-
     constructor () {
       super(pkgName, me.app)
     }
